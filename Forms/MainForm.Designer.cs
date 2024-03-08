@@ -28,12 +28,16 @@ partial class MainForm
     /// </summary>
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         audioListBox = new ListBox();
         audioNameLabel = new Label();
         audioProgressBar = new ProgressBar();
         previousAudioButton = new Button();
         nextAudioButton = new Button();
         playAudioButton = new Button();
+        trackTimer = new System.Windows.Forms.Timer(components);
+        trackStartLabel = new Label();
+        trackEndLabel = new Label();
         SuspendLayout();
         // 
         // audioListBox
@@ -43,7 +47,6 @@ partial class MainForm
         audioListBox.FormattingEnabled = true;
         audioListBox.Location = new Point(12, 172);
         audioListBox.Name = "audioListBox";
-        audioListBox.ScrollAlwaysVisible = true;
         audioListBox.Size = new Size(325, 324);
         audioListBox.TabIndex = 0;
         audioListBox.SelectedIndexChanged += audioListBox_SelectedIndexChanged;
@@ -62,11 +65,12 @@ partial class MainForm
         // audioProgressBar
         // 
         audioProgressBar.BackColor = Color.FromArgb(18, 18, 18);
-        audioProgressBar.Location = new Point(12, 135);
+        audioProgressBar.Location = new Point(12, 156);
         audioProgressBar.Name = "audioProgressBar";
         audioProgressBar.Size = new Size(325, 10);
+        audioProgressBar.Style = ProgressBarStyle.Continuous;
         audioProgressBar.TabIndex = 2;
-        audioProgressBar.Value = 50;
+        audioProgressBar.MouseDown += audioProgressBar_MouseDown;
         // 
         // previousAudioButton
         // 
@@ -114,12 +118,41 @@ partial class MainForm
         playAudioButton.UseVisualStyleBackColor = false;
         playAudioButton.Click += playAudioButton_Click;
         // 
+        // trackTimer
+        // 
+        trackTimer.Enabled = true;
+        trackTimer.Tick += trackTimer_Tick;
+        // 
+        // trackStartLabel
+        // 
+        trackStartLabel.AutoSize = true;
+        trackStartLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+        trackStartLabel.ForeColor = Color.FromArgb(83, 83, 83);
+        trackStartLabel.Location = new Point(12, 133);
+        trackStartLabel.Name = "trackStartLabel";
+        trackStartLabel.Size = new Size(45, 20);
+        trackStartLabel.TabIndex = 6;
+        trackStartLabel.Text = "00:00";
+        // 
+        // trackEndLabel
+        // 
+        trackEndLabel.AutoSize = true;
+        trackEndLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+        trackEndLabel.ForeColor = Color.FromArgb(83, 83, 83);
+        trackEndLabel.Location = new Point(293, 133);
+        trackEndLabel.Name = "trackEndLabel";
+        trackEndLabel.Size = new Size(45, 20);
+        trackEndLabel.TabIndex = 7;
+        trackEndLabel.Text = "00:00";
+        // 
         // MainForm
         // 
         AutoScaleDimensions = new SizeF(8F, 20F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = Color.FromArgb(18, 18, 18);
         ClientSize = new Size(349, 508);
+        Controls.Add(trackEndLabel);
+        Controls.Add(trackStartLabel);
         Controls.Add(playAudioButton);
         Controls.Add(nextAudioButton);
         Controls.Add(previousAudioButton);
@@ -142,4 +175,7 @@ partial class MainForm
     private Button previousAudioButton;
     private Button nextAudioButton;
     private Button playAudioButton;
+    private System.Windows.Forms.Timer trackTimer;
+    private Label trackStartLabel;
+    private Label trackEndLabel;
 }

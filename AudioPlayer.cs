@@ -13,6 +13,7 @@ public class AudioPlayer
     private Mp3FileReader _reader;
     private WaveOutEvent _player;
     private string? _currentAudio;
+    public int timeDuration { get; private set; }
 
     public bool IsPlaying { get; private set; }
 
@@ -37,6 +38,7 @@ public class AudioPlayer
         {
             _currentAudio = audio;
             _reader = new Mp3FileReader(_currentAudio);
+            timeDuration = (int) _reader.TotalTime.TotalSeconds;
             _player.Stop();
             _player.Init(_reader);
             _player.Play();
@@ -45,10 +47,20 @@ public class AudioPlayer
 
     public void Pause()
     {
-        if(_player.PlaybackState == PlaybackState.Playing)
+        if (_player.PlaybackState == PlaybackState.Playing)
         {
             _player.Pause();
-           IsPlaying = false;
+            IsPlaying = false;
+        }
+        else if (_player.PlaybackState == PlaybackState.Stopped) _player.Play();
+    }
+    public int GetCurrentTime() => (int)_reader.CurrentTime.TotalSeconds;
+
+    public void SetCurrentTime(int newCurrentTime)
+    {
+        if (_currentAudio != null)
+        {
+            _reader.CurrentTime = TimeSpan.FromSeconds(newCurrentTime);
         }
     }
 }

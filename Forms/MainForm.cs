@@ -69,4 +69,34 @@ public partial class MainForm : Form
             audioListBox.SelectedIndex--;
         }
     }
+
+    private void trackTimer_Tick(object sender, EventArgs e)
+    {
+        if (_audioPlayer.IsPlaying)
+        {
+            audioProgressBar.Maximum = _audioPlayer.timeDuration;
+            audioProgressBar.Value = _audioPlayer.GetCurrentTime();
+            int currentTime = _audioPlayer.GetCurrentTime();
+
+            try
+            {
+                int currentMinutes = audioProgressBar.Value / 60;
+                int currentSeconds = audioProgressBar.Value - (currentMinutes * 60);
+                trackStartLabel.Text = $"{currentMinutes}:{currentSeconds}";
+
+                int maxMinutes = audioProgressBar.Maximum / 60;
+                int maxSeconds = audioProgressBar.Maximum - (maxMinutes * 60);
+                trackEndLabel.Text = $"{maxMinutes}:{maxSeconds}";
+            }
+            catch
+            {
+
+            }
+        }
+    }
+
+    private void audioProgressBar_MouseDown(object sender, MouseEventArgs e)
+    {
+        _audioPlayer.SetCurrentTime(audioProgressBar.Maximum * e.X / audioProgressBar.Width);
+    }
 }
