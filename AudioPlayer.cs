@@ -63,4 +63,7 @@ public class AudioPlayer
             _reader.CurrentTime = TimeSpan.FromSeconds(newCurrentTime);
         }
     }
+
+    public float GetVolume() => _player.Volume;
+    public void SetVolume(int newVolume) => _player.Volume = (float)newVolume / 100;
 }

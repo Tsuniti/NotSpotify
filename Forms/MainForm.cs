@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace NotSpotify.MainForm;
 
 public partial class MainForm : Form
@@ -5,12 +7,21 @@ public partial class MainForm : Form
     private string _folderPath = "Audio/";
     private string _selectedAudioName = string.Empty;
     private AudioPlayer _audioPlayer;
+
+
+    [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
+    private extern static bool ReleaseCapture();
+    [DllImport("user32.DLL", EntryPoint = "SendMessage")]
+    private extern static int SendMessage(System.IntPtr hWnd,
+                                int Msg, int wParam, int lParam);
     public MainForm()
     {
 
         _audioPlayer = new AudioPlayer();
 
         InitializeComponent();
+
+        volumeTrackBar.Value = (int)(_audioPlayer.GetVolume() * 100);
 
 
     }
@@ -26,9 +37,19 @@ public partial class MainForm : Form
         if (audioListBox.SelectedItem is null) return;
 
         _selectedAudioName = audioListBox.SelectedItem.ToString();
-        audioNameLabel.Text = _folderPath + _selectedAudioName;
-
         _audioPlayer.Play(_folderPath + _selectedAudioName);
+
+        audioNameLabel.Text = _selectedAudioName;
+
+        if (audioNameLabel.Text.Length > 31)
+        {
+            labelAutoScrollTimer.Start();
+        }
+        else
+        {
+            labelAutoScrollTimer.Stop();
+            audioNameLabel.Location = new Point(0, 0);
+        }
 
     }
     private void FillAudioListBox()
@@ -98,5 +119,41 @@ public partial class MainForm : Form
     private void audioProgressBar_MouseDown(object sender, MouseEventArgs e)
     {
         _audioPlayer.SetCurrentTime(audioProgressBar.Maximum * e.X / audioProgressBar.Width);
+    }
+
+    private void volumeTrackBar_Scroll(object sender, EventArgs e)
+    {
+        _audioPlayer.SetVolume(volumeTrackBar.Value);
+    }
+
+    private void labelAutoScrollTimer_Tick(object sender, EventArgs e)
+    {
+        if (audioNameLabel.Left > -audioNameLabel.Width)
+        {
+            audioNameLabel.Left -= 2;
+        }
+        else
+        {
+            audioNameLabel.Left = autoScrollPanel.Width;
+        }
+    }
+
+    private void titleBarPanel_MouseDown(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+        {
+            ReleaseCapture();
+            SendMessage(Handle, 0x112, 0xf012, 0);
+        }
+    }
+
+    private void closeButton_Click(object sender, EventArgs e)
+    {
+        Environment.Exit(0);
+    }
+
+    private void MinimizeButton_Click(object sender, EventArgs e)
+    {
+        this.WindowState = FormWindowState.Minimized;
     }
 }
